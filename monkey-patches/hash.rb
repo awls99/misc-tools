@@ -32,6 +32,7 @@ class Hash
 
   #@param key_list[String] dot separated values to mark keys in nested hashes
   #returns the value of a nested hash following the path in key_list
+  #@note supports nested arrays
   #example:
   # {'a' => {'b' => 1}}.deep_key('a.b') #=> 1
   def deep_key key_list
@@ -41,6 +42,8 @@ class Hash
     keys.each do |key|
       if !current_val
         current_val = self[ key ]
+      elsif current_val.is_a? Array
+        current_val = current_val[ key.to_i ]
       else
         current_val = current_val[ key ]
       end
