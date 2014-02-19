@@ -1,3 +1,5 @@
+require 'thwait'
+
 class Array
 
   #this method only works if you have Hash#deep_contains_pair?
@@ -23,6 +25,20 @@ class Array
       end
     end
     return false
+  end
+
+  #uses each but opens a new thread for each element
+  #@param abort[Boolean] if true sets abort_on_exception on each thread
+  def threaded_each abort = true, &block
+    threads = []
+    self.each do |element|
+      thread = Thread.new do
+        yield(element)
+      end
+      thread.abort_on_exception if abort
+      threads.push thread
+    end
+    ThreadsWait.all_waits(*threads)
   end
 
 
