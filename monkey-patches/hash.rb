@@ -51,5 +51,28 @@ class Hash
     end
     return current_val
   end
+
+
+  #@param args
+  #returns arrays for each arg with values for key arg for each arg key on this or nested hash
+  #Similar to Hash#values_at, but includes values for nested hashes inside self
+  #@note if args.legnth == 1 flat array
+  def deep_values_at *args
+    values = args.map do |target_key|
+      found = []
+      self.each do |key, value|
+        if key == target_key
+          found.push value
+        else
+          if value.respond_to? :deep_values_at
+            found.concat value.deep_values_at( target_key )
+          end
+        end
+      end
+      found
+    end
+    values.flatten if args.length < 2
+  end
+
   
 end
